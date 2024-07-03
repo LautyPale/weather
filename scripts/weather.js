@@ -113,6 +113,7 @@ function weatherInterpretation(isDay, weatherCode) {
 }
 
 async function getWeatherData() {
+    
     try {
         const weatherResponse = await fetch(`${apiUrl}?${new URLSearchParams(params)}`, {method: 'GET'});
         if (!weatherResponse.ok) {
@@ -165,6 +166,8 @@ form.addEventListener('submit', async function(event) {
         errorDiv.textContent = `Error: ${error.message}`;
         errorDiv.classList.remove('hidden');
     }
+
+    form.reset();
 });
 
 async function placeholderWeather() {
