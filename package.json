@@ -1,0 +1,11 @@
+{
+  "name": "weather",
+  "version": "1.0.0",
+  "main": "weather.js",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./style/input.css -o ./style/output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.4"
+  }
+}

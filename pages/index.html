@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <link rel="stylesheet" href="../style/output.css" />
+  </head>
+  <body class="bg-[#222] font-varela">
+    <div
+      class="container mx-auto max-w-xl my-16 p-4 shadow-lg rounded-3xl bg-gradient-to-b from-blue-900 to-blue-400 from-30% text-white text-center"
+      >
+      <form id="city-form" class="flex items-center justify-center text-left mt-5">
+        <div class="relative">
+
+          <input
+          type="text"
+          id="cityInput"
+          placeholder="Enter city name"
+          spellcheck="false"
+          autocomplete="off"
+          class="ml-3 px-8 rounded-full w-[400px] h-[62px]
+          bg-black/40 focus:outline focus:outline-gray-300
+          text-lg text-white placeholder:text-white/50"
+          required/>
+
+          <div id="suggestions" class="absolute top-[100%] ml-3 mt-1 bg-black/40 w-[475px] rounded-3xl shadow-lg z-10 text-white text-lg backdrop-blur-sm">
+            <!-- suggestions here -->
+          </div>
+
+        </div>
+        <button
+          type="submit"
+          class="mx-3 rounded-full w-[62px] h-[62px] flex items-center justify-center
+          bg-black/40 hover:bg-white/5 hover:border hover:border-gray-300
+          "
+        >
+          <img src="../svg/search.svg" alt="search" class="w-5" />
+        </button>
+      </form>
+
+      <div>
+        <p id="error-message" class="py-8 text-red-500 text-2xl font-bold hidden text-pretty">Example error</p>
+      </div>
+
+      <div id="weather" class="mb-5 flex flex-col items-center">
+        <img
+          id="icon"
+          src="../svg/clear-night.svg"
+          alt="weather icon"
+          class="w-48"
+        />
+        <h1 id="temp-value" class="text-8xl font-bold mb-4">10°C</h1>
+
+          <h2 id="city-name" class="text-3xl font-bold mb-4">
+              Buenos Aires, Argentina
+          </h2>
+
+        <div id="details" class="grid gap-4">
+          <div id="precipitation" class="grid grid-cols-6 text-left">
+            <img
+              src="../svg/rain.svg"
+              alt="precipitation icon"
+              class="w-12 col-span-1"
+            />
+
+            <div class="col-span-5 pt-2">
+              <span id="precipitation-value" class="ml-5 font-bold text-2xl"
+                >0%</span
+              >
+              <span class="ml-1 text-2xl">Precipitation</span>
+            </div>
+          </div>
+
+          <div id="humidity" class="grid grid-cols-6 text-left">
+            <img
+              src="../svg/humidity.svg"
+              alt="humidity icon"
+              class="w-12 col-span-1"
+            />
+
+            <div class="col-span-5 pt-2">
+              <span id="humidity-value" class="ml-5 font-bold text-2xl"
+                >75%</span
+              >
+              <span class="ml-1 text-2xl">Humidity</span>
+            </div>
+          </div>
+
+          <div id="wind" class="grid grid-cols-6 text-left">
+            <img
+              src="../svg/wind.svg"
+              alt="wind icon"
+              class="w-12 col-span-1"
+            />
+
+            <div class="col-span-5 pt-2">
+              <span id="wind-value" class="ml-5 font-bold text-2xl"
+                >4.0 m/s</span
+              >
+              <span class="ml-1 text-2xl">Wind</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../scripts/autocomplete.js"></script>
+    <script src="../scripts/weather.js"></script>
+    
+  </body>
+</html>
