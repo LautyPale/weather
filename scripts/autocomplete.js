@@ -6,12 +6,12 @@ let lastResults = [];
 document.addEventListener('DOMContentLoaded', () => {
 
     let timeoutId = null;
-    // Muestro sugerencias solo cuando el input tiene al menos 3 caracteres
+    // Suggestions only show when the input has at least 2 characters
     input.addEventListener('input', () => {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
             const query = input.value.trim();
-            if (query.length > 2) {
+            if (query.length > 1) {
                 if (query !== lastQuery) {
                     fetchSuggestions(query);
                 } else {
@@ -21,24 +21,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearSuggestions();
             }
         }, 500)
-    })
+    })  
 
-    // Verifico si se pulsa la tecla Backspace
+    // Verify if the Backspace key is pressed
     input.addEventListener('keyup', (event) => {
-
-        if (event.key === 'Backspace' && input.value.trim().length <= 2) {
+        const query = input.value.trim();
+        if (event.key === 'Backspace' && query.length <= 1) {
             clearSuggestions();
         }
     })
 
     input.addEventListener('focus', () => {
         const query = input.value.trim();
-        if (query.length > 2 && query === lastQuery && lastResults.length > 0) {
+        if (query.length > 1 && query === lastQuery && lastResults.length > 0) {
             displaySuggestions(lastResults);
         }
     });
 
-    // Elimino las sugerencias al pulsar fuera del input
+    // Clear suggestions when the user clicks outside of the input
     document.addEventListener('click', (event) => {
         if (!input.contains(event.target) && !suggestions.contains(event.target)) {
             clearSuggestions();
@@ -66,10 +66,8 @@ function fetchSuggestions(query) {
             }
         })
         .catch(error => {
-            console.error('Error fetching suggestions:', error);
-            errorDiv.textContent = `Error: ${error.message}`;
-            errorDiv.classList.remove('hidden');
-            clearSuggestions(); 
+            handleError(error);
+            clearSuggestions();
         });
 }
 
@@ -88,19 +86,17 @@ function displaySuggestions(results) {
         const content = document.createElement('div');
         content.classList.add('py-2', 'px-6', 'truncate');
 
-        if (!result.admin1) {
-            if (!result.country) {
-                content.textContent = `${result.name}`;
-            } else {
-                content.textContent = `${result.name}, ${result.country}`;
-            }
-        } else {
-            if (result.admin1 === result.country) {
-                content.textContent = `${result.name}, ${result.country}`;
-            } else {
-                content.textContent = `${result.name}, ${result.admin1}, ${result.country}`;
-            }
+        let contextText = result.name;
+
+        if (result.admin1 && result.admin1 !== result.country) {
+            contextText += `, ${result.admin1}`;
         }
+
+        if (result.country) {
+            contextText += `, ${result.country}`;
+        }
+
+        content.textContent = contextText;
 
         item.addEventListener('click', () => {
             input.value = result.name;

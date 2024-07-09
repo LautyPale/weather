@@ -32,6 +32,7 @@
         </div>
         <button
           type="submit"
+          id="submit-button"
           class="mx-3 rounded-full w-[62px] h-[62px] flex items-center justify-center
           bg-black/40 hover:bg-white/5 hover:border hover:border-gray-300
           "
@@ -41,7 +42,7 @@
       </form>
 
       <div>
-        <p id="error-message" class="py-8 text-red-500 text-2xl font-bold hidden text-pretty">Example error</p>
+        <p id="error-message" class="px-14 pt-4 text-red-500 text-2xl text-pretty font-bold hidden"></p>
       </div>
 
       <div id="weather" class="mb-5 flex flex-col items-center">
@@ -53,9 +54,9 @@
         />
         <h1 id="temp-value" class="text-8xl font-bold mb-4">10°C</h1>
 
-        <h2 id="feels-like-value" class="text-3xl font-bold mb-4">9.5°C</h2>
+        <h2 id="feels-like-value" class="text-3xl font-bold mb-4">Feels like 9.5°C</h2>
 
-          <h2 id="city-name" class="text-3xl font-bold mb-4">
+          <h2 id="city-name" class="text-3xl font-bold mb-4 text-balance">
               Buenos Aires, Argentina
           </h2>
 

@@ -1,7 +1,7 @@
 const params = {
     "latitude": '',
     "longitude": '',
-    "current": ["temperature_2m","relative_humidity_2m","is_day","precipitation","showers","weather_code","wind_speed_10m"],
+    "current": ["temperature_2m","relative_humidity_2m","is_day","precipitation","showers","weather_code","wind_speed_10m,apparent_temperature"],
     "hourly": "precipitation_probability",
     'forecast_days': 1,
 };
@@ -13,9 +13,8 @@ const selectedCity = {
 
 const geocodeUrl = 'https://geocoding-api.open-meteo.com/v1/search';
 const apiUrl = 'https://api.open-meteo.com/v1/forecast';
-
 const form = document.getElementById('city-form');
-const locationButton = document.getElementById('location');
+const submitButton = document.getElementById('submit-button');
 const errorDiv = document.getElementById('error-message');
 
 /* 
@@ -72,6 +71,71 @@ const weatherInterpretationCodes = {
     99: 'thunderstorm',
 }
 
+form.addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    submitButton.disabled = true;
+
+    errorDiv.classList.add('hidden');
+    const cityName = input.value.trim();
+
+    if (cityName.length <= 1) {
+        handleError(new Error('City name must be at least 2 characters long'));
+        form.reset();
+        submitButton.disabled = false;
+        return;
+    }
+
+    try {
+
+        const geoResponse = await fetch(`${geocodeUrl}?name=${cityName}&language=es&format=json`);
+
+        if (!geoResponse.ok) {
+            throw new Error('Failed to fetch geolocation data');
+        }
+
+        const geoData = await geoResponse.json();
+
+        if (!geoData.results || geoData.results.length === 0) {
+            throw new Error('City not found');
+        }
+
+        const { latitude, longitude, name, country } = geoData.results[0];
+
+        params.latitude = latitude;
+        params.longitude = longitude;
+        selectedCity.name = name;
+        selectedCity.country = country;
+
+        await fetchWeatherData();
+
+        form.reset();
+
+    } catch (error) {
+        handleError(error);
+    }
+
+    submitButton.disabled = false;
+});
+
+async function fetchWeatherData() {
+
+    const weatherResponse = await fetch(`${apiUrl}?${new URLSearchParams(params)}`, { method: 'GET' });
+
+    if (!weatherResponse.ok) {
+        throw new Error('Failed to fetch weather data');
+    }
+        
+    const weatherData = await weatherResponse.json();
+    if (!weatherData) {
+        throw new Error('Weather data not found');
+    }
+
+    displayWeather(weatherData, selectedCity.name, selectedCity.country);
+    
+    clearData();
+}
+
 function displayWeather(data, name, country) {
 
     let currentHour = new Date().getHours();
@@ -85,19 +149,23 @@ function displayWeather(data, name, country) {
         const isDay = data.current.is_day;
         const windSpeed = data.current.wind_speed_10m;
         const weatherCode = data.current.weather_code;
+        const feelsLike = data.current.apparent_temperature;
 
-        document.getElementById('city-name').textContent = `${city}, ${country}`;
+        if (!country) {
+            document.getElementById('city-name').textContent = `${city}`;
+        } else {
+            document.getElementById('city-name').textContent = `${city}, ${country}`;
+        }
         document.getElementById('temp-value').textContent = `${Math.round(currentTemp)}°C`;
         document.getElementById('precipitation-value').textContent = `${precipitation}%`;
         document.getElementById('humidity-value').textContent = `${humidity}%`;
         document.getElementById('wind-value').textContent = `${windSpeed} m/s`;
+        document.getElementById('feels-like-value').textContent = `Feels like ${Math.round(feelsLike)}°C`;
 
         weatherInterpretation(isDay, weatherCode);
 
     } catch (error) {
-        console.error('Error displaying weather data:', error);
-        errorDiv.textContent = `Error: ${error.message}`;
-        errorDiv.classList.remove('hidden');
+        handleError(error);
     }
     
 } 
@@ -122,53 +190,9 @@ async function getWeatherData() {
         const weatherData = await weatherResponse.json();
         displayWeather(weatherData);
     } catch (error) {
-        console.error('Error fetching weather data:', error);
-        errorDiv.textContent = `Error: ${error.message}`;
-        errorDiv.classList.remove('hidden');
+        handleError(error);
     }
 }
-
-form.addEventListener('submit', async function(event) {
-    event.preventDefault();
-    const cityName = document.getElementById('cityInput').value;
-
-    try {
-
-        if ((params.latitude === undefined) || (params.longitude === undefined)) {
-            const geoResponse = await fetch(`${geocodeUrl}?name=${cityName}`);
-            if (!geoResponse.ok) {
-                throw new Error('Failed to fetch geolocation data');
-            }
-            const geoData = await geoResponse.json();
-            const { latitude, longitude, name, country } = geoData.results[0];
-
-            params.latitude = latitude;
-            params.longitude = longitude;
-            selectedCity.name = name;
-            selectedCity.country = country;
-        }
-
-        const weatherResponse = await fetch(`${apiUrl}?${new URLSearchParams(params)}`, { method: 'GET' });
-        if (!weatherResponse.ok) {
-            throw new Error('Failed to fetch weather data');
-        }
-        
-        const weatherData = await weatherResponse.json();
-        displayWeather(weatherData, selectedCity.name, selectedCity.country);
-
-        params.latitude = undefined;
-        params.longitude = undefined;
-        selectedCity.name = undefined;
-        selectedCity.country = undefined;
-
-    } catch (error) {
-        console.error('Error fetching weather data:', error);
-        errorDiv.textContent = `Error: ${error.message}`;
-        errorDiv.classList.remove('hidden');
-    }
-
-    form.reset();
-});
 
 async function placeholderWeather() {
 
@@ -185,10 +209,34 @@ async function placeholderWeather() {
         displayWeather(weatherData, 'Buenos Aires', 'Argentina');
 
     } catch (error) {
-        console.error('Error fetching weather data:', error);
+        handleError(error);
+    }
+}
+
+function clearData() {
+
+    params.latitude = undefined;
+    params.longitude = undefined;
+    selectedCity.name = undefined;
+    selectedCity.country = undefined;
+}
+
+function handleError(error) {
+
+    console.error('error fetching weather data:', error);
+
+    if (error.message === 'City not found') {
+
+        errorDiv.textContent = 'Error: City not found. Please enter a valid city name.';
+    } else if (error.message === 'Weather data is undefined') {
+        errorDiv.textContent = 'Error: Failed to retrieve weather data. Please try again later.';
+    } else if (error.message === 'City name must be at least 2 characters long') {
+        errorDiv.textContent = 'Error: City name must be at least 2 characters long.';
+    } else {
         errorDiv.textContent = `Error: ${error.message}`;
-        errorDiv.classList.remove('hidden');
     }
 
-    placeholderWeather(); 
+    errorDiv.classList.remove('hidden');
 }
+
+placeholderWeather();
