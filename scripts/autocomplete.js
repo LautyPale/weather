@@ -103,6 +103,7 @@ function displaySuggestions(results) {
             params.latitude = result.latitude;
             params.longitude = result.longitude;
             selectedCity.name = result.name;
+            selectedCity.admin1 = result.admin1;
             selectedCity.country = result.country;
 
             form.dispatchEvent(new Event('submit'), { bubbles: true, cancelable: true });

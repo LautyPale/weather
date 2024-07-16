@@ -8,6 +8,7 @@ const params = {
 
 const selectedCity = {
     name: '',
+    admin1: '',
     country: '',
 }
 
@@ -88,7 +89,7 @@ form.addEventListener('submit', async function(event) {
 
     try {
 
-        const geoResponse = await fetch(`${geocodeUrl}?name=${cityName}&language=es&format=json`);
+        const geoResponse = await fetch(`${geocodeUrl}?name=${cityName}&count=15&language=es&format=json`);
 
         if (!geoResponse.ok) {
             throw new Error('Failed to fetch geolocation data');
@@ -100,12 +101,17 @@ form.addEventListener('submit', async function(event) {
             throw new Error('City not found');
         }
 
-        const { latitude, longitude, name, country } = geoData.results[0];
+        if (!params.latitude || !params.longitude) {
+            const { latitude, longitude, name, admin1, country } = geoData.results[0];
 
-        params.latitude = latitude;
-        params.longitude = longitude;
-        selectedCity.name = name;
-        selectedCity.country = country;
+            params.latitude = latitude;
+            params.longitude = longitude;
+            selectedCity.name = name;
+            selectedCity.admin1 = admin1;
+            selectedCity.country = country;
+        }
+        
+        console.log(geoData.results)
 
         await fetchWeatherData();
 
@@ -131,18 +137,17 @@ async function fetchWeatherData() {
         throw new Error('Weather data not found');
     }
 
-    displayWeather(weatherData, selectedCity.name, selectedCity.country);
+    displayWeather(weatherData, selectedCity.name, selectedCity.admin1,selectedCity.country);
     
     clearData();
 }
 
-function displayWeather(data, name, country) {
+function displayWeather(data, name, admin1 ,country) {
 
     let currentHour = new Date().getHours();
 
     try {
 
-        const city = name;
         const currentTemp = data.current.temperature_2m;
         const precipitation = data.hourly.precipitation_probability[currentHour];
         const humidity = data.current.relative_humidity_2m;
@@ -151,11 +156,18 @@ function displayWeather(data, name, country) {
         const weatherCode = data.current.weather_code;
         const feelsLike = data.current.apparent_temperature;
 
-        if (!country) {
-            document.getElementById('city-name').textContent = `${city}`;
-        } else {
-            document.getElementById('city-name').textContent = `${city}, ${country}`;
+        let locationText = name;
+
+        if (country && admin1) {
+            locationText += `, ${admin1}, ${country}`;
+        } else if (country) {
+            locationText += `, ${country}`;
+        } else if (admin1) {
+            locationText += `, ${admin1}`;
         }
+
+        document.getElementById('city-name').textContent = locationText;
+
         document.getElementById('temp-value').textContent = `${Math.round(currentTemp)}°C`;
         document.getElementById('precipitation-value').textContent = `${precipitation}%`;
         document.getElementById('humidity-value').textContent = `${humidity}%`;
