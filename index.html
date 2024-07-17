@@ -7,60 +7,53 @@
     <link rel="stylesheet" href="../style/output.css" />
     <link rel="shortcut icon" href="./svg/cloud-icon.svg" type="image/x-icon">
   </head>
-  <body class="bg-[#222] font-varela">
-    <div
-      class="container mx-auto max-w-xl my-16 p-4 shadow-lg rounded-3xl bg-gradient-to-b from-blue-900 to-blue-400 from-30% text-white text-center"
-      >
-      <form id="city-form" class="flex items-center justify-center text-left mt-5">
+  <body class="bg-[#222] font-varela mx-8 sm:mx-0">
+    <div class="container 
+      lg:max-w-xl md:max-w-md max-w-sm my-16 p-4 mx-auto
+      shadow-lg rounded-3xl
+      text-white text-center
+      bg-gradient-to-b from-blue-900 to-blue-400 from-30%">
+
+      <form id="city-search" class="flex items-center justify-center text-left mt-5">
         <div class="relative">
 
           <input
-          type="text"
-          id="cityInput"
-          placeholder="Enter city name"
-          spellcheck="false"
-          autocomplete="off"
-          class="ml-3 px-8 rounded-full w-[400px] h-[62px]
+          type="text" id="cityInput" placeholder="Enter city name"
+          onkeypress="return event.keyCode != 13;" spellcheck="false" autocomplete="off"
+          class="px-8 rounded-full lg:w-[500px] md:w-[375px] w-[315px] h-[62px]
           bg-black/40 focus:outline focus:outline-gray-300
           text-lg text-white placeholder:text-white/50"
           required/>
 
-          <div id="suggestions" class="absolute top-[100%] ml-3 mt-1 bg-black/40 w-[475px] rounded-3xl shadow-lg z-10 text-white text-lg backdrop-blur-sm">
+          <div id="suggestions" class="absolute top-[100%] mt-1 lg:w-[500px] md:w-[375px] w-[315px]  bg-black/40 rounded-3xl shadow-lg z-10 text-white lg:text-lg md:text-base text-sm backdrop-blur-sm">
             <!-- suggestions here -->
           </div>
 
         </div>
-        <button
-          type="submit"
-          id="submit-button"
-          class="mx-3 rounded-full w-[62px] h-[62px] flex items-center justify-center
-          bg-black/40 hover:bg-white/5 hover:border hover:border-gray-300
-          "
-        >
-          <img src="/svg/search.svg" alt="search" class="w-5" />
-        </button>
       </form>
 
       <div>
         <p id="error-message" class="px-14 pt-4 text-red-500 text-2xl text-pretty font-bold hidden"></p>
       </div>
 
-      <div id="weather" class="mb-5 flex flex-col items-center">
-        <img
-          id="icon"
-          src="/svg/clear-night.svg"
-          alt="weather icon"
-          class="w-48"
-        />
-        <h1 id="temp-value" class="text-8xl font-bold mb-4">10°C</h1>
+      <div id="weather" class="flex flex-col items-center">
 
-        <h2 id="feels-like-value" class="text-3xl font-bold mb-4">Feels like 9.5°C</h2>
+        <div class="grid grid-cols-2 gap-4 items-center">
 
-          <h2 id="city-name" class="text-3xl font-bold mb-4 text-balance">
+          <img id="icon" src="/svg/clear-night.svg" alt="weather icon" class="lg:w-48 md:w-40 w-36"/>
+
+          <div>
+            <h1 id="temp-value" class="lg:text-8xl md:text-7xl text-6xl font-bold">10°C</h1>
+            <h2 id="feels-like-value" class="lg:text-2xl text-xl font-bold">Feels like 9.5°C</h2>
+          </div>
+
+        </div>
+
+          <h2 id="city-name" class="lg:text-[2.75rem] md:text-[2.5rem] text-[2rem] font-bold mb-4 text-pretty">
               Buenos Aires, Argentina
           </h2>
 
-        <div id="details" class="grid gap-4">
+        <div id="details" class="grid gap-0 md:gap-4 lg:text-3xl md:text-2xl text-xl">
           <div id="precipitation" class="grid grid-cols-6 text-left">
             <img
               src="/svg/rain.svg"
@@ -69,10 +62,10 @@
             />
 
             <div class="col-span-5 pt-2">
-              <span id="precipitation-value" class="ml-5 font-bold text-2xl"
+              <span id="precipitation-value" class="ml-5 font-bold"
                 >0%</span
               >
-              <span class="ml-1 text-2xl">Precipitation</span>
+              <span class="ml-1">Precipitation</span>
             </div>
           </div>
 
@@ -84,10 +77,10 @@
             />
 
             <div class="col-span-5 pt-2">
-              <span id="humidity-value" class="ml-5 font-bold text-2xl"
+              <span id="humidity-value" class="ml-5 font-bold"
                 >75%</span
               >
-              <span class="ml-1 text-2xl">Humidity</span>
+              <span class="ml-1">Humidity</span>
             </div>
           </div>
 
@@ -99,10 +92,10 @@
             />
 
             <div class="col-span-5 pt-2">
-              <span id="wind-value" class="ml-5 font-bold text-2xl"
+              <span id="wind-value" class="ml-5 font-bold"
                 >4.0 m/s</span
               >
-              <span class="ml-1 text-2xl">Wind</span>
+              <span class="ml-1">Wind</span>
             </div>
           </div>
         </div>
