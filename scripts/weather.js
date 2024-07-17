@@ -14,8 +14,7 @@ const selectedCity = {
 
 const geocodeUrl = 'https://geocoding-api.open-meteo.com/v1/search';
 const apiUrl = 'https://api.open-meteo.com/v1/forecast';
-const form = document.getElementById('city-form');
-const submitButton = document.getElementById('submit-button');
+const form = document.getElementById('city-search');
 const errorDiv = document.getElementById('error-message');
 
 /* 
@@ -75,15 +74,12 @@ const weatherInterpretationCodes = {
 form.addEventListener('submit', async function(event) {
     event.preventDefault();
 
-    submitButton.disabled = true;
-
     errorDiv.classList.add('hidden');
     const cityName = input.value.trim();
 
     if (cityName.length <= 1) {
         handleError(new Error('City name must be at least 2 characters long'));
         form.reset();
-        submitButton.disabled = false;
         return;
     }
 
@@ -121,7 +117,6 @@ form.addEventListener('submit', async function(event) {
         handleError(error);
     }
 
-    submitButton.disabled = false;
 });
 
 async function fetchWeatherData() {

@@ -99,7 +99,6 @@ function displaySuggestions(results) {
         content.textContent = contextText;
 
         item.addEventListener('click', () => {
-            input.value = result.name;
             params.latitude = result.latitude;
             params.longitude = result.longitude;
             selectedCity.name = result.name;
